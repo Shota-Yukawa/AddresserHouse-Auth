@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'addresser-jwtissuer
+
+  Sample SAM Template for addresser-jwtissuer
+
+  '
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+    LoggingConfig:
+      LogFormat: JSON
+Resources:
+  JwtIssuerFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: JwtIssuerFunction
+    Properties:
+      CodeUri: JwtIssuerFunction
+      Handler: bootstrap
+      Runtime: go1.x
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /issuer
+            Method: GET
+      Environment:
+        Variables:
+          PARAM1: VALUE
+Outputs:
+  JwtIssuerAPI:
+    Description: API Gateway endpoint URL for Prod environment for First Function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/issuer/
+  JwtIssuerFunction:
+    Description: First Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - JwtIssuerFunction
+      - Arn
+  JwtIssuerFunctionIamRole:
+    Description: Implicit IAM Role created for addresser jwt issuer function
+    Value:
+      Fn::GetAtt:
+      - JwtIssuerFunctionRole
+      - Arn
